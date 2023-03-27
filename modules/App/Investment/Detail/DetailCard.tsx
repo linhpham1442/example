@@ -43,19 +43,19 @@ interface MakeInvestmentItem {
 
 export const DetailCard = ({ item, slug }: { item: MakeInvestmentItem; slug?: string }) => {
   const [showInputInvestment, setShowInputInvestment] = useState(false);
-  const [data, setData] = useState(MakeInvestmentData);
-  const [currentItem, setCurrentItem] = useState(null);
+  // const [data, setData] = useState(MakeInvestmentData);
+  // const [currentItem, setCurrentItem] = useState(null);
   const [invested, setInvested] = useState(0);
   const { state, dispatch } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (slug) {
-      setData(MakeInvestmentData.filter((x) => x.link !== slug));
-      setCurrentItem(MakeInvestmentData.find((x) => x.link === slug));
-    } else {
-      setData(MakeInvestmentData);
-    }
-  }, [slug]);
+// console.log(getInvestmentPackage())
+//   useEffect(() => {
+//     if (slug) {
+//       setData(MakeInvestmentData.filter((x) => x.link !== slug));
+//       setCurrentItem(MakeInvestmentData.find((x) => x.link === slug));
+//     } else {
+//       setData(MakeInvestmentData);
+//     }
+//   }, [slug]);
   if (!item) return;
 
   return (
@@ -174,7 +174,7 @@ export const DetailCard = ({ item, slug }: { item: MakeInvestmentItem; slug?: st
               By clicking the button below, you agree to SF&apos;s <span className="text-[#333a6d]">Terms of Service</span> and acknowledge
               you&apos;ve read our <span className="text-[#333a6d]">Privacy Policy.</span>
             </div>
-            <InvestmentModal item={currentItem} />
+            <InvestmentModal item={item} />
           </div>
           <div className="col-span-1 space-y-6 pl-10">
             <div className="text-[#3D2E7C] text-xl font-bold">Your Order</div>

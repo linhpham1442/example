@@ -8,6 +8,7 @@ import { MakeInvestmentData } from "./MakeInvestmentData";
 import { useRouter } from "next/router";
 import InvestmentModal from "../Modal";
 import { getMeProfile } from "@/common/api/user";
+import { getInvestmentPackage } from "@/common/api/investment";
 
 const content = (
   <div className="bg-[#F8F6F0] p-3 leading-[22px] app text-sm  grid grid-flow-col justify-center items-center space-x-3">
@@ -75,6 +76,9 @@ const MakeInvestment: React.FC<MakeInvestmentProps> = ({}) => {
   const [currentItem, setCurrentItem] = useState(null);
   const [balance, setBalance] = useState(0)
   const [invested, setInvested] = useState(0)
+  const [listPackage, setListPackage] = useState([]);
+  const [list, setList] = useState([])
+
   const fetchMeProfile = async () => {
     try {
       let { data } = await getMeProfile() as any;
@@ -87,13 +91,38 @@ const MakeInvestment: React.FC<MakeInvestmentProps> = ({}) => {
     }
   };
 
-  useEffect(() => {
-    if (slug) {
-      setData(MakeInvestmentData.filter((x) => x.link !== slug));
-    } else {
-      setData(MakeInvestmentData);
+  const fetchInvestmentPackage = async () => {
+    const { data } = await getInvestmentPackage();
+    if (data) {
+      setListPackage(data?.data?.data);
     }
-  }, [slug]);
+  };
+  useEffect(() => {
+    fetchInvestmentPackage();
+  }, []);
+
+  useEffect(() => {
+    if (listPackage.length > 0) {
+      let result: any[] = []
+      listPackage.map((v, i) => {
+        let obj = MakeInvestmentData.find((x) => x.name == v.packageId + 1)
+        let comb = { ...v, ...obj }
+        result.push(comb)
+      })
+      if (result.length > 0) {
+        setList(result)
+      } else setList(MakeInvestmentData)
+    }
+  }, [listPackage])
+  
+  useEffect(() => {
+    if (slug && list.length > 0) {
+      setData(list.filter((x) => x.link !== slug));
+    } else {
+      setData(list);
+    }
+    console.log("hj",list)
+  }, [list, slug]);
 
   return (
     <div>

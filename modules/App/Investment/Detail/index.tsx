@@ -8,6 +8,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { MakeInvestmentData } from "../MakeInvestment/MakeInvestmentData";
 import { useRouter } from "next/router";
+import { getInvestmentPackage } from "@/common/api/investment";
 
 const MakeInvestmentDetail = () => {
   const [data, setData] = useState(MakeInvestmentData);
@@ -16,14 +17,38 @@ const MakeInvestmentDetail = () => {
   const router = useRouter();
   const slug = router.query.id as string;
 
-  useEffect(() => {
-    if (slug) {
-      setData(MakeInvestmentData.filter((x) => x.link !== slug));
-      setCurrentItem(MakeInvestmentData.find((x) => x.link === slug));
-    } else {
-      setData(MakeInvestmentData);
+  const [listPackage, setListPackage] = useState([]);
+  const [list, setList] = useState([])
+  const fetchInvestmentPackage = async () => {
+    const { data } = await getInvestmentPackage();
+    if (data) {
+      setListPackage(data?.data?.data);
     }
-  }, [slug]);
+  };
+  useEffect(() => {
+    fetchInvestmentPackage();
+  }, []);
+
+  useEffect(() => {
+    if (listPackage.length > 0) {
+      let result: any[] = []
+      listPackage.map((v, i) => {
+        let obj = MakeInvestmentData.find((x) => x.name == v.packageId + 1)
+        let comb = { ...v, ...obj }
+        result.push(comb)
+      })
+      setList(result)
+    }
+  }, [listPackage])
+
+  useEffect(() => {
+    if (slug && list.length > 0) {
+      setData(list.filter((x) => x.link !== slug));
+      setCurrentItem(list.find((x) => x.link === slug));
+    } else {
+      setData(list);
+    }
+  }, [list, slug]);
 
   return (
     <>
